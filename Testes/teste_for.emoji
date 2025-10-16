@@ -1,0 +1,10 @@
+🤫 teste_for.emoji
+   Testa a estrutura de repeticao 'for'.
+👀
+
+🔢 i;
+
+😮 (i 🎁 0; i 🐣 3; i 🎁 i ➕ 1) 🤜
+    👄("Valor de i: ");
+    👄(i);
+🤛

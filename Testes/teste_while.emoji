@@ -1,0 +1,15 @@
+🤫 teste_while.emoji
+   Testa a declaracao, atribuicao, laco 'while' e operacoes.
+👀
+
+🔢 contador;
+
+contador 🎁 0;
+
+😑 (contador 🐣 5) 🤜
+    👄("Contador e: ");
+    👄(contador);
+    contador 🎁 contador ➕ 1;
+🤛
+
+👄("Fim do loop while!");

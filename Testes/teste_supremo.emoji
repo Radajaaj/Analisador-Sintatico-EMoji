@@ -1,0 +1,44 @@
+🤫 teste_supremo.emoji
+   Este é um teste completo que usa a maioria das funcionalidades da linguagem:
+   - Declarações de todos os tipos
+   - Atribuições
+   - Estruturas aninhadas (if/else dentro de um for)
+   - Operadores relacionais
+   - Comandos de I/O
+👀
+
+🤫 --- DECLARAÇÕES --- 👀
+🔢 i;
+🔢 max_iter;
+🔢 numero_secreto;
+🤥 achou;
+🔤 mensagem;
+
+🤫 --- INICIALIZAÇÃO DAS VARIÁVEIS --- 👀
+max_iter 🎁 10;
+numero_secreto 🎁 7;
+achou 🎁 👎;
+mensagem 🎁 "Iniciando o teste supremo...";
+👄(mensagem);
+
+🤫 --- LAÇO PRINCIPAL E LÓGICA ANINHADA --- 👀
+😮 (i 🎁 0; i 🐣 max_iter; i 🎁 i ➕ 1) 🤜
+    👄("---");
+    👄("Iteracao: ");
+    👄(i);
+
+    🤫 Só continua a logica se ainda nao achou o numero 👀
+    🤨 (achou 🥚 👎) 🤜
+        🤫 Logica de "adivinhacao" 👀
+        🤨 (i 🥚 numero_secreto) 🤜
+            👄("ACHOU O NUMERO SECRETO!");
+            achou 🎁 👍;
+            mensagem 🎁 "O numero foi encontrado com sucesso!";
+        🤛 🖖 🤜
+            👄("Ainda nao achou...");
+        🤛
+    🤛
+🤛
+
+👄("--- Fim do Teste Supremo ---");
+👄(mensagem);
