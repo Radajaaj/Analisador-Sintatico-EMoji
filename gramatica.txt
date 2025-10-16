@@ -1,0 +1,72 @@
+1. Estrutura do Programa
+
+<programa> ::= <lista_comandos>
+<lista_comandos> ::= <comando> <lista_comandos> | ε
+<bloco> ::= ABRIR_BLOCO <lista_comandos> FECHAR_BLOCO
+
+
+
+2. Comandos
+
+<comando> ::= <declaracao_variavel>
+            | <atribuicao>
+            | <comando_io>
+            | <estrutura_if>
+            | <estrutura_while>
+            | <estrutura_for>
+            | <bloco>
+
+
+
+3. Declarações e Atribuições
+
+<declaracao_variavel> ::= <tipo> ID PONTO_VIRGULA
+<tipo> ::= INT | STRING_TYPE | BOOL
+
+<atribuicao> ::= ID ATRIBUICAO <expressao> PONTO_VIRGULA
+<atribuicao_sem_pv> ::= ID ATRIBUICAO <expressao>
+
+
+
+4. Comandos de I/O, Condicionais e Laços
+
+<comando_io> ::= COMANDO_SAIDA ABRIR_PARENTESES <expressao> FECHAR_PARENTESES PONTO_VIRGULA
+               | COMANDO_ENTRADA ABRIR_PARENTESES ID FECHAR_PARENTESES PONTO_VIRGULA
+
+<estrutura_if> ::= IF ABRIR_PARENTESES <expressao> FECHAR_PARENTESES <bloco> <parte_else>
+<parte_else> ::= ELSEIF ABRIR_PARENTESES <expressao> FECHAR_PARENTESES <bloco> <parte_else>
+               | ELSE <bloco>
+               | ε
+
+<estrutura_while> ::= WHILE ABRIR_PARENTESES <expressao> FECHAR_PARENTESES <bloco>
+
+<estrutura_for> ::= FOR ABRIR_PARENTESES <atribuicao_sem_pv> PONTO_VIRGULA <expressao> PONTO_VIRGULA <atribuicao_sem_pv> FECHAR_PARENTESES <bloco>
+
+
+
+5. Expressões (com Precedência de Operadores)
+
+<expressao> ::= <termo_logico> <expressao_restante>
+<expressao_restante> ::= OP_OR <termo_logico> <expressao_restante> | ε
+
+<termo_logico> ::= <fator_relacional> <termo_logico_restante>
+<termo_logico_restante> ::= OP_AND <fator_relacional> <termo_logico_restante> | ε
+
+<fator_relacional> ::= <expressao_aritmetica> <fator_relacional_restante>
+<fator_relacional_restante> ::= <op_relacional> <expressao_aritmetica> | ε
+<op_relacional> ::= OP_MAIOR | OP_MENOR | OP_IGUAL_COMP | OP_IGUAL_LOGICO
+
+<expressao_aritmetica> ::= <termo> <expressao_aritmetica_restante>
+<expressao_aritmetica_restante> ::= <op_arit1> <termo> <expressao_aritmetica_restante> | ε
+<op_arit1> ::= OP_SOMA | OP_SUB
+
+<termo> ::= <fator> <termo_restante>
+<termo_restante> ::= <op_arit2> <fator> <termo_restante> | ε
+<op_arit2> ::= OP_MULT | OP_DIV
+
+<fator> ::= ID
+           | NUMERO_INT
+           | STRING_LITERAL
+           | TRUE
+           | FALSE
+           | ABRIR_PARENTESES <expressao> FECHAR_PARENTESES

@@ -1,0 +1,48 @@
+First(<fator>) = { ID, NUMERO_INT, STRING_LITERAL, TRUE, FALSE, ABRIR_PARENTESES }
+First(<termo_restante>) = { OP_MULT, OP_DIV, ε }
+
+First(<termo>) = { ID, NUMERO_INT, STRING_LITERAL, TRUE, FALSE, ABRIR_PARENTESES }
+
+First(<expressao_aritmetica_restante>) = { OP_SOMA, OP_SUB, ε }
+
+First(<expressao_aritmetica>) = { ID, NUMERO_INT, STRING_LITERAL, TRUE, FALSE, ABRIR_PARENTESES }
+
+First(<op_relacional>) = { OP_MAIOR, OP_MENOR, OP_IGUAL_COMP, OP_IGUAL_LOGICO }
+
+First(<fator_relacional_restante>) = { OP_MAIOR, OP_MENOR, OP_IGUAL_COMP, OP_IGUAL_LOGICO, ε }
+
+First(<fator_relacional>) = { ID, NUMERO_INT, STRING_LITERAL, TRUE, FALSE, ABRIR_PARENTESES }
+
+First(<termo_logico_restante>) = { OP_AND, ε }
+
+First(<termo_logico>) = { ID, NUMERO_INT, STRING_LITERAL, TRUE, FALSE, ABRIR_PARENTESES }
+
+First(<expressao_restante>) = { OP_OR, ε }
+
+First(<expressao>) = { ID, NUMERO_INT, STRING_LITERAL, TRUE, FALSE, ABRIR_PARENTESES }
+
+First(<tipo>) = { INT, STRING_TYPE, BOOL }
+
+First(<declaracao_variavel>) = { INT, STRING_TYPE, BOOL }
+
+First(<atribuicao>) = { ID }
+
+First(<atribuicao_sem_pv>) = { ID }
+
+First(<comando_io>) = { COMANDO_SAIDA, COMANDO_ENTRADA }
+
+First(<estrutura_if>) = { IF }
+
+First(<parte_else>) = { ELSEIF, ELSE, ε }
+
+First(<estrutura_while>) = { WHILE }
+
+First(<estrutura_for>) = { FOR }
+
+First(<bloco>) = { ABRIR_BLOCO }
+
+First(<comando>) = { INT, STRING_TYPE, BOOL, ID, COMANDO_SAIDA, COMANDO_ENTRADA, IF, WHILE, FOR, ABRIR_BLOCO }
+
+First(<lista_comandos>) = { INT, STRING_TYPE, BOOL, ID, COMANDO_SAIDA, COMANDO_ENTRADA, IF, WHILE, FOR, ABRIR_BLOCO, ε }
+
+First(<programa>) = { INT, STRING_TYPE, BOOL, ID, COMANDO_SAIDA, COMANDO_ENTRADA, IF, WHILE, FOR, ABRIR_BLOCO, ε }
