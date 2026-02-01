@@ -1,0 +1,7 @@
+🔢 numero;
+🔤 texto;
+
+numero 🎁 10;
+texto 🎁 "Ola Mundo";
+
+numero 🎁 "Erro";

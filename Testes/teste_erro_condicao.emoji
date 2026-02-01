@@ -1,0 +1,6 @@
+🔢 valor;
+valor 🎁 10;
+
+❓ (valor + 5) {
+   valor 🎁 0;
+}

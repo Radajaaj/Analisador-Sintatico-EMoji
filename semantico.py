@@ -14,12 +14,14 @@ class TabelaSimbolos:
             self.pilha_escopos.pop()
 
     def declarar(self, nome, tipo):
-        if self.buscar(nome) is not None:
+        # Verifica se já existe no escopo ATUAL (o último da pilha)
+        if nome in self.pilha_escopos[-1]:
             return False 
         self.pilha_escopos[-1][nome] = {"tipo": tipo}
         return True
 
     def buscar(self, nome):
+        # Busca do escopo mais interno para o mais externo
         for escopo in reversed(self.pilha_escopos):
             if nome in escopo:
                 return escopo[nome]
@@ -51,6 +53,7 @@ class GeradorTAC:
         buffer.append(" CÓDIGO INTERMEDIÁRIO (TAC)")
         buffer.append("="*40)
         for linha in self.instrucoes:
+            # Identação simples para labels
             if ":" in linha and "goto" not in linha:
                 buffer.append(linha)
             else:
@@ -92,7 +95,32 @@ class AnalisadorSemantico:
         if s in ['🤥', 'BOOL', 'VALOR_BOOL', 'TRUE', 'FALSE', '👍', '👎', 'BOOLEAN']: return 'BOOL'
         return 'UNKNOWN'
 
-    # --- ROTEAMENTO ---
+    # Mapa de tradução de operadores
+    def traduzir_operador(self, op_emoji):
+        mapa = {
+            # Relacionais
+            '🐣': '<',
+            '🐓': '>',
+            '🥚': '==',
+            '🤏': '<=',
+            '✌️': '>=',
+            '👎': '!=',
+            '🤝': '==',
+            'OP_IGUAL_COMP': '==',
+            
+            # Lógicos
+            'OP_AND': '&&',
+            'OP_OR': '||',
+            
+            # Matemáticos
+            '➕': '+',
+            '➖': '-',
+            '✖️': '*',
+            '➗': '/'
+        }
+        return mapa.get(op_emoji, op_emoji)
+
+    # Roteamento
     def visitar(self, no):
         if no is None: return None
         
@@ -126,11 +154,13 @@ class AnalisadorSemantico:
         if len(no.children) < 2: return
         raw_tipo = self.pegar_valor_folha(no.children[0])
         nome_id = self.pegar_valor_folha(no.children[1])
-        # Limpa aspas do nome da variavel tambem, por segurança
+        # Limpa aspas do nome da variavel
         nome_id = str(nome_id).replace("'", "").replace('"', "")
         tipo = self.normalizar_tipo(raw_tipo)
 
-        self.tabela.declarar(nome_id, tipo)
+        # [CORREÇÃO] Verifica se declarou com sucesso
+        if not self.tabela.declarar(nome_id, tipo):
+            self.erro(f"Variável '{nome_id}' já declarada neste escopo.")
 
     def visitar_atribuicao(self, no):
         nome = self.pegar_valor_folha(no.children[0])
@@ -241,7 +271,7 @@ class AnalisadorSemantico:
         for filho in no.children:
             if str(filho.value) in ["BLOCO_COMANDOS", "BLOCO_COMANDOS_"]: self.visitar(filho)
 
-    # --- EXPRESSÕES ---
+    # --- EXPRESSÕES (COM TRADUÇÃO) ---
     def visitar_expressao_completa(self, no):
         if not no.children: return None
         val_esq = self.visitar_termo(no.children[0])
@@ -252,26 +282,23 @@ class AnalisadorSemantico:
         if not no.children or str(no.children[0].value) == 'epsilon': return val_esq
         
         op_node = no.children[0]
-        op = self.pegar_valor_folha(op_node)
-        
-        # --- AQUI ESTÁ A CORREÇÃO MÁGICA ---
-        # Limpa aspas simples e duplas que possam ter vindo do léxico/str()
-        op = str(op).strip().replace("'", "").replace('"', "")
+        op_emoji = self.pegar_valor_folha(op_node)
+        op_emoji = str(op_emoji).strip().replace("'", "").replace('"', "")
+
+        # [CORREÇÃO] Traduz para operador padrão (TAC)
+        op_tac = self.traduzir_operador(op_emoji)
 
         val_dir = self.visitar_termo(no.children[1])
         
-        ops_booleanos = [
-            '🐓', '🐣', '🥚', '🤏', '✌️', '🤝',
-            'OP_MAIOR', 'OP_MENOR', 'OP_IGUAL_COMP', 
-            'OP_AND', 'OP_OR', 'OP_IGUAL_LOGICO'
-        ]
-
+        # Define se o resultado é Booleano ou Inteiro baseando-se no operador traduzido
+        ops_booleanos = ['<', '>', '==', '!=', '<=', '>=', '&&', '||']
+        
         tipo_res = 'INT'
-        if op in ops_booleanos:
+        if op_tac in ops_booleanos:
             tipo_res = 'BOOL'
         
         novo = self.gerador.novo_temp()
-        self.gerador.add(f"{novo} = {val_esq['end']} {op} {val_dir['end']}")
+        self.gerador.add(f"{novo} = {val_esq['end']} {op_tac} {val_dir['end']}")
         
         res = {'end': novo, 'tipo': tipo_res}
         if len(no.children) > 2: return self.visitar_expressao_linha(no.children[2], res)
@@ -285,13 +312,16 @@ class AnalisadorSemantico:
     def visitar_termo_linha(self, no, val_esq):
         if not no.children or str(no.children[0].value) == 'epsilon': return val_esq
         
-        op = self.pegar_valor_folha(no.children[0])
-        op = str(op).strip().replace("'", "").replace('"', "") # Limpa aspas aqui também
+        op_emoji = self.pegar_valor_folha(no.children[0])
+        op_emoji = str(op_emoji).strip().replace("'", "").replace('"', "")
+        
+        # [CORREÇÃO] Traduz operadores matemáticos também (➕ -> +)
+        op_tac = self.traduzir_operador(op_emoji)
         
         val_dir = self.visitar_fator(no.children[1])
         
         novo = self.gerador.novo_temp()
-        self.gerador.add(f"{novo} = {val_esq['end']} {op} {val_dir['end']}")
+        self.gerador.add(f"{novo} = {val_esq['end']} {op_tac} {val_dir['end']}")
         res = {'end': novo, 'tipo': 'INT'}
         
         if len(no.children) > 2: return self.visitar_termo_linha(no.children[2], res)
