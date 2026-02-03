@@ -27,14 +27,14 @@ def main():
         print(f"Erro: Arquivo '{caminho_arquivo}' não encontrado.")
         sys.exit(1)
 
-    print(f"--- Compilando: {caminho_arquivo} ---\n")
+    print(f"Compilando: {caminho_arquivo}\n")
 
     try:
         with open(caminho_arquivo, 'r', encoding='utf-8') as f:
             codigo_fonte = f.read()
 
-        # --- FASE 1: LÉXICO ---
-        print(">>> 1. Análise Léxica...")
+        # Léxico
+        print("1. Análise Léxica")
         tokens, sucesso_lexico = analisar_lexicamente(codigo_fonte)
         
         if not sucesso_lexico:
@@ -45,8 +45,8 @@ def main():
         lex_content = "\n".join([str(t) for t in tokens])
         salvar_arquivo(lex_content, caminho_arquivo, ".emojilex")
 
-        # --- FASE 2: SINTÁTICO ---
-        print("\n>>> 2. Análise Sintática...")
+        # Sintático
+        print("\n2. Análise Sintática")
         tokens_fmt = [{'tipo': t[0], 'valor': t[1], 'linha': t[2], 'coluna': t[3]} for t in tokens]
         arvore = analisar_sintaticamente(tokens_fmt)
         
@@ -56,27 +56,19 @@ def main():
         
         print("✅ Sintaxe Correta!")
 
-        # --- FASE 3: SEMÂNTICO & CÓDIGO ---
-        print("\n>>> 3. Análise Semântica e Geração de Código...")
+        # Semântico e Geração de Código
+        print("\n3. Análise Semântica e Geração de Código")
         analisador = AnalisadorSemantico()
         sucesso_semantico = analisador.visitar(arvore)
 
         if sucesso_semantico:
             print("✅ Semântica Correta!")
-            
-            # Pega o código TAC gerado
             codigo_tac = analisador.gerador.obter_codigo()
-            
-            # Imprime no terminal
             print("\n" + codigo_tac)
-            
-            # Salva em arquivo .tac
             salvar_arquivo(codigo_tac, caminho_arquivo, ".tac")
-            
             print("\n🎉 COMPILAÇÃO CONCLUÍDA COM SUCESSO! 🎉")
         else:
             print(f"\n❌ Falha na Semântica ({len(analisador.erros)} erros encontrados).")
-            # Imprime os erros
             for erro in analisador.erros:
                 print(f"   - {erro}")
             sys.exit(1)
