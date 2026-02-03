@@ -290,7 +290,7 @@ class AnalisadorSemantico:
             if str(filho.value) in ["BLOCO_COMANDOS", "BLOCO_COMANDOS_"]: 
                 self.visitar(filho)
 
-    # --- EXPRESSÕES (COM TRADUÇÃO) ---
+    # Expressões
     def visitar_expressao_completa(self, no):
         if not no.children: 
             return None
